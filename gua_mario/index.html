@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Game Shoot Plane</title>
+  <style media="screen">
+    body {
+      display: flex;
+    }
+    canvas {
+      border: 1px black solid;
+      display: inline-block;
+      flex-basis: 400px;
+    }
+    .introduction-wrapper {
+     padding: 24px 0px 24px 100px;
+    }
+  </style>
+  <!-- gua game 相关文件 -->
+  <script src='gua_game/utils.js'></script>
+  <script src='gua_game/game.js'></script>
+  <script src='gua_game/scene.js'></script>
+  <!-- 场景文件 -->
+  <script src='scene/main/bird.js'></script>
+  <script src='scene/main/pipe.js'></script>
+  <script src='scene/main/gua_nes_sprite.js'></script>
+  <!-- <script src='scene/main/cloud.js'></script>
+  <script src='scene/main/bullet.js'></script> -->
+  <script src='scene/main/scene_main.js'></script>
+  <script src='scene/edit/scene_editor.js'></script>
+  <!-- 结束和标题场景 -->
+  <!-- <script src='scene/end/sceneEnd.js'></script>
+        <script src='scene/start/sceneTitle.js'></script> -->
+  <!-- 编辑器场景 -->
+  <!-- <script src='scene/edit/editScene.js'></script> -->
+  <!-- 关卡数据 -->
+  <!-- <script src='level.js'></script> -->
+</head>
+
+<body>
+  <canvas id="id-canvas" width="512" height="480"></canvas>
+  <div class="introduction-wrapper">
+    <input id=id-input-speed type="range" value="1">
+    <div class="">
+      <h3>操作指南</h3>
+      <p>游戏场景：按下f发射子弹；按下a左移；按下d右移；按下w上移；按下s下移；</p>
+    </div>
+  </div>
+
+  <script src=main.js></script>
+</body>
+
+</html>

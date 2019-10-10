@@ -40,7 +40,7 @@ var __main = function() {
         paddle: 'image/paddle.png',
         start: 'image/start1.jpg',
     }
-    log(SceneEdit)
+    // log(SceneEdit)
     var game = Game.instance(30, images, function(g){
         var s = SceneTitle.new(g)
         g.runWithScene(s)
