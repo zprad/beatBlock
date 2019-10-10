@@ -76,10 +76,10 @@ class SceneEditor extends Scene {
   
       game.registerAction("a", (keyStatus) => {
         // log('move left => ', keyStatus)
-        this.sprite.moveLeft(keyStatus)
+        this.sprite.move(-1, keyStatus)
       })
       game.registerAction("d", (keyStatus) => {
-        this.sprite.moveRight(keyStatus)
+        this.sprite.move(1, keyStatus)
       })
       game.registerAction("w", (keyStatus) => {
         // log('move top => ', keyStatus)

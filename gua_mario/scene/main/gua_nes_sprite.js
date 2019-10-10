@@ -2,7 +2,7 @@ class NesSprite {
     constructor(game, bytesData, x, y) {
         this.game = game
         this.x = x || 100
-        this.y = y || 420
+        this.y = y || 100
         this.bytesData = bytesData
         this.init()
     }
@@ -11,7 +11,15 @@ class NesSprite {
     }
     init() {
         this.pixelWidth = 2
-        this.frameCount = 4
+
+        this.numsOfRow = 4
+        this.numsOfCol = 2
+
+        this.w = 32 || this.numsOfCol * this.pixelWidth * 8
+        this.h = 64 || this.numsOfRow * this.pixelWidth * 8
+
+
+        this.frameCount = 3
         this.frameIndex = 0
         this.NumberOfBytesPerBlock = 16
         this.NumberOfBlocksPerFrame = 8
@@ -19,68 +27,53 @@ class NesSprite {
         this.count = 0
 
         this.speed = 1
+        // 重力和加速度
         this.vy = 0
         this.gy = 10
-        this.rotation = 0
+        // this.rotation = 0
         this.flipX = false
         this.alpha = 1
 
+        // 水平加速度和摩檫力
         this.vx = 0
         this.mx = 0
     }
     move(x, keyStatus) {
         this.flipX = (x < 0)
-        this.x += this.vx
-        this.vx += this.mx
-        if (this.vx * this.mx > 0) {
-            this.vx = 0
-            this.mx = 0
+        let s = x * this.speed
+        if (keyStatus === 'down') {
+            this.vx += s
+            this.vx = Math.floor(this.vx) > 10 ? 10 * (this.vx / Math.abs(this.vx)) : this.vx
+            this.mx = -s / 2
         }
     }
     jump(keyStatus) {
         this.vy = -10
-        this.rotation = -45
-    }
-    moveRight(keyStatus) {
-        if (keyStatus === 'down') {
-            this.vx += this.speed
-            this.mx = -this.speed / 2
-            this.move(this.speed)
-        }
-    }
-    moveLeft(keyStatus) {
-        // log('move left')
-        if (keyStatus === 'down') {
-            this.vx += -this.speed
-            this.mx = this.speed / 2
-            this.move(-this.speed)
-        }
+        // this.rotation = -45
     }
     update() {
-        // this.count += 1
-        // if (this.count >= this.CountPerFrame) {
-        //     this.count = 0
-        //     this.frameIndex++
-        //     this.frameIndex = this.frameIndex % this.frameCount
-        // }
+        this.vx += this.mx
+        // 水平加速度和摩檫力加速度同向，表明速度已经为0，停止摩檫力
+        if (this.vx * this.mx > 0) {
+            this.vx = 0
+            this.mx = 0
+        } else {
+            this.x += this.vx
+        }
         
         this.y += this.vy
         this.vy += this.gy * 0.2
         
-        if (this.y >= 420) {
-            this.y = 420
+        if (this.y >= 100) {
+            this.y = 100
         }
-        const context = this.game.context
-        let w2 = this.w / 2
-        let h2 = this.h / 2
-        context.translate(this.x + w2, this.y + h2)
-        if (this.flipX) {
-            context.scale(-1, 1)
+
+        this.count += 1
+        if (this.count >= this.CountPerFrame) {
+            this.count = 0
+            this.frameIndex++
+            this.frameIndex = this.frameIndex % this.frameCount
         }
-        context.globalAlpha = this.alpha
-        context.rotate(this.rotation * Math.PI / 180)
-        context.translate(-w2, -h2)
-        context.restore()
     }
     drawBlock(context, data, x, y, pixelWidth) {
         const colors = [
@@ -109,8 +102,14 @@ class NesSprite {
             
         }
     }
-    drawSprite(data, w, h) {
+    drawSprite() {
         const context = this.game.context
+
+        const { NumberOfBytesPerBlock, NumberOfBlocksPerFrame, frameIndex } = this
+        const data = this.bytesData.slice(frameIndex * NumberOfBytesPerBlock * NumberOfBlocksPerFrame)
+
+        const w = this.numsOfCol
+        const h = this.numsOfRow
 
         let x = this.x
         let y = this.y
@@ -118,13 +117,14 @@ class NesSprite {
         // let blockSize = 8 // 每行每列画8个图块
         let pixelSizeOfblock = 8 // 每个图块8个像素
         let pixelWidth = this.pixelWidth // 一个像素点宽高10倍
-        let NumberOfBytesPerBlock = this.NumberOfBytesPerBlock // 一个像素2bits，一个图块8*8像素，因此就128bits，1bytes=8bits，因此一个图块16bytes
+        // 一个像素2bits，一个图块8*8像素，因此就128bits，1bytes=8bits，因此一个图块16bytes
 
         // 现在canvas上画8*8个图块
         for (let i = 0; i < h; i++) {
             for (let j = 0; j < w; j++) {
                 let px = x + j * pixelSizeOfblock * pixelWidth
                 let py = y + i * pixelSizeOfblock * pixelWidth
+                // log('px, py => ', px, ' ', py)
 
                 let index = (i * w + j) * NumberOfBytesPerBlock
                 let blockData = data.slice(index)
@@ -133,8 +133,26 @@ class NesSprite {
         }
     }
     draw() {
-        const { NumberOfBytesPerBlock, NumberOfBlocksPerFrame, frameIndex } = this
-        const frameData = this.bytesData.slice(frameIndex * NumberOfBytesPerBlock * NumberOfBlocksPerFrame)
-        this.drawSprite(frameData, 2, 4)
+
+        const context = this.game.context
+        context.save()
+        log('w => ', this.w)
+        log('x => ', this.x)
+        let w2 = this.w / 2
+        let h2 = this.h / 2
+        context.translate(this.x + w2, 0)
+        if (this.flipX) {
+            context.scale(-1, 1)
+        }
+        context.globalAlpha = this.alpha
+        context.rotate(this.rotation * Math.PI / 180)
+        context.translate(-w2 - this.x, 0)
+
+        // draw mario
+        this.drawSprite()
+
+        
+
+        context.restore()
     }
 }
