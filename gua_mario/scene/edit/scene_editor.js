@@ -2,12 +2,26 @@ class GuaTileMap {
   constructor(game) {
     this.game = game
     this.tiles = [
-      1, 2, 3, 0, 4,
-      3, 1, 4, 0, 2,
-      2, 2, 2, 0, 3,
+      1, 2, 3, 0, 4, 1, 2, 3, 0, 4, 1, 2, 3, 0, 4,
+      3, 1, 4, 0, 2, 1, 2, 3, 0, 4, 1, 2, 3, 0, 4,
+      2, 2, 2, 0, 3, 1, 2, 3, 0, 4, 1, 2, 3, 0, 4,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      //
+      1, 2, 3, 0, 4, 1, 2, 3, 0, 4, 1, 2, 3, 0, 4,
+      3, 1, 4, 0, 2, 1, 2, 3, 0, 4, 1, 2, 3, 0, 4,
+      2, 2, 2, 0, 3, 1, 2, 3, 0, 4, 1, 2, 3, 0, 4,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ]
     // 一列5个
-    this.th = 5
+    this.th = 15
     // Todo: tw必须为整数
     this.tw = this.tiles.length / this.th
     this.tileImages = [
@@ -52,9 +66,8 @@ class SceneEditor extends Scene {
       // this.bird = Bird(game);
       this.sprite = NesSprite.new(game, window.bitesData)
   
-      this.background = game.imageByName('background')
-      this.background.x = 0
-      this.background.y = 0
+      // game.context.fillStyle = '#5080ff'
+      // game.context.fillRect(0, 0, 1000, 1000)
   
       this.score = 0;
 
@@ -91,7 +104,7 @@ class SceneEditor extends Scene {
       var game = this.game
       
       // draw
-      game.drawImage(this.background);
+      // game.drawImage(this.background);
       // game.drawImage(this.bird);
 
       this.map.draw()

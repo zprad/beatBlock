@@ -136,8 +136,6 @@ class NesSprite {
 
         const context = this.game.context
         context.save()
-        log('w => ', this.w)
-        log('x => ', this.x)
         let w2 = this.w / 2
         let h2 = this.h / 2
         context.translate(this.x + w2, 0)

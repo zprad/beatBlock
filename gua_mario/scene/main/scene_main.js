@@ -11,6 +11,8 @@ class SceneMain extends Scene {
     this.background = game.imageByName('background')
     this.background.x = 0
     this.background.y = 0
+    // game.context.fillStyle = '#5080ff'
+    // game.context.fillRect(0, 0, 1000, 1000)
 
     this.score = 0;
 

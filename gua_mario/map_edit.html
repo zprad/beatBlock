@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mario</title>
+    <style>
+        canvas {
+            border: 1px solid skyblue;
+        }
+        * {
+            outline: 1px dashed skyblue;
+        }
+    </style>
+</head>
+<body>
+    <p class="bytes-offset">32784</p>
+    <canvas data-action="draw_tile" id="id-canvas" width="512" height="480"></canvas>
+    <!-- <canvas id="id-canvas-sprite" width="160" height="320"></canvas>
+    <canvas id="id-tiles" data-action="draw_tile" data-type="tile" width="32" height="32"></canvas> -->
+    <div class="block-container">
+        <img src="img/b1.png" data-action="change_active_tile" data-id="1">
+        <img src="img/b2.png" data-action="change_active_tile" data-id="2">
+        <img src="img/b3.png" data-action="change_active_tile" data-id="3">
+        <img src="img/b4.png" data-action="change_active_tile" data-id="4">
+        <img src="img/b5.png" data-action="change_active_tile" data-id="5">
+    </div>
+    <div class="controls-area">
+        <button data-action="changeOffset" data-offset="-16">-16</button>
+        <button data-action="changeOffset" data-offset="16">16</button>
+        <button data-action="changeOffset" data-offset="-1024">-1024</button>
+        <button data-action="changeOffset" data-offset="1024">1024</button>
+        <button data-action="clear_tile" data-selector="#id-tiles">清除tile</button>
+    </div>
+    <script>
+        const e = (el) => document.querySelector(el)
+
+        const log = console.log.bind(console)
+
+        class TileMap {
+            constructor() {
+                this.tiles = []
+                this.th = 15
+                this.tw = 16
+                this.initTiles()
+            }
+            static new(...args) {
+                return new this(...args)
+            }
+            initTiles() {
+                let total = this.th * this.tw
+                for (let index = 0; index < total; index++) {
+                    this.tiles[index] = 0
+                }
+            }
+            setTileWith(position, id) {
+                const [i, j] = position
+                let index = i * this.th + j
+                this.tiles[index] = id
+            }
+            exportToJSON() {
+                return JSON.stringify(this.tiles)
+            }
+        }
+        
+        const eventActions = {
+            change_active_tile(event) {
+                const target = event.target
+                window.active_tile = target
+                window.active_tile_id = Number(target.dataset.id)
+            },
+            draw_tile(event) {
+                let tilePosition = computeTilePosition(event)
+                drawTileWith(tilePosition)
+            },
+        }
+        const computeTilePosition = (event) => {
+            const target = event.target
+            let rect = target.getBoundingClientRect()
+            let x = event.clientX - rect.left
+            let y = event.clientY - rect.top
+
+
+            const pixelWidthPerTile = window.pixelWidthPerTile
+            let i = Math.floor(x / pixelWidthPerTile)
+            let j = Math.floor(y / pixelWidthPerTile)
+            return [i, j]
+        }
+        const drawTileWith = (position) => {
+            const pixelWidthPerTile = window.pixelWidthPerTile
+
+            let px = position[0] * pixelWidthPerTile
+            let py = position[1] * pixelWidthPerTile
+            window.context.fillRect(px, py, pixelWidthPerTile, pixelWidthPerTile)
+            window.context.drawImage(window.active_tile, px, py)
+            window.tileMap.setTileWith(position, window.active_tile_id)
+        }
+        const bindEvents = () => {
+            document.addEventListener('click', (event) => {
+                // log('event => ', event)
+                const target = event.target
+                let action = target.dataset.action
+                eventActions[action] && eventActions[action](event)
+            })
+        
+            let isMoving = false
+            window.canvas.addEventListener('mousedown', (event) => {
+                log('mouse => ', event)
+                let tilePosition = computeTilePosition(event)
+                drawTileWith(tilePosition)
+                isMoving = true
+            })
+            window.canvas.addEventListener('mousemove', (event) => {
+                log('mousemove => ', event)
+                if (isMoving) {
+                    let tilePosition = computeTilePosition(event)
+                    drawTileWith(tilePosition)
+                }
+            })
+            window.canvas.addEventListener('mouseup', (event) => {
+                let tilePosition = computeTilePosition(event)
+                drawTileWith(tilePosition)
+                isMoving = false
+            })
+        }
+        const init = () => {
+            window.active_tile = null
+            window.active_tile_id = 0
+            window.canvas = e('#id-canvas')
+            window.context = window.canvas.getContext('2d')
+            window.context.fillStyle = '#5080ff'
+            window.context.fillRect(0, 0, 1000, 1000)
+            window.pixelWidthPerTile = 32
+            window.tileMap = TileMap.new()
+        }
+        const _main = () => {
+            init()
+            bindEvents()
+        }
+        _main()
+    </script>
+</body>
+</html>
