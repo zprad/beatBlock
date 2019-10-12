@@ -18,9 +18,10 @@ class NesSprite {
         this.w = 32 || this.numsOfCol * this.pixelWidth * 8
         this.h = 64 || this.numsOfRow * this.pixelWidth * 8
 
-
+        // 动画的帧数
         this.frameCount = 3
         this.frameIndex = 0
+
         this.NumberOfBytesPerBlock = 16
         this.NumberOfBlocksPerFrame = 8
         this.CountPerFrame = 8
@@ -38,6 +39,9 @@ class NesSprite {
         this.vx = 0
         this.mx = 0
     }
+    addMap(map) {
+        this.map = map
+    }
     move(x, keyStatus) {
         this.flipX = (x < 0)
         let s = x * this.speed
@@ -51,6 +55,25 @@ class NesSprite {
         this.vy = -10
         // this.rotation = -45
     }
+    updateGravity() {
+        const blockWidth = 32
+
+        this.y += this.vy
+        this.vy += this.gy * 0.2
+        
+        let i = Math.floor(this.x / blockWidth)
+        let j = Math.floor(this.y / blockWidth) + 2
+        // 判断是否在地上
+        let onTheGround = this.map.onTheGround(i, j)
+        if (onTheGround) {
+            this.vy = 0
+            this.y = (j - 2) * blockWidth
+        }
+        
+        // if (this.y >= 100) {
+        //     this.y = 100
+        // }
+    }
     update() {
         this.vx += this.mx
         // 水平加速度和摩檫力加速度同向，表明速度已经为0，停止摩檫力
@@ -61,12 +84,7 @@ class NesSprite {
             this.x += this.vx
         }
         
-        this.y += this.vy
-        this.vy += this.gy * 0.2
-        
-        if (this.y >= 100) {
-            this.y = 100
-        }
+        this.updateGravity()
 
         this.count += 1
         if (this.count >= this.CountPerFrame) {

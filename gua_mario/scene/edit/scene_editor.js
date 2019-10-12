@@ -2,18 +2,18 @@ class GuaTileMap {
   constructor(game) {
     this.game = game
     this.tiles = [
-      1, 2, 3, 0, 4, 1, 2, 3, 0, 4, 1, 2, 3, 0, 4,
-      3, 1, 4, 0, 2, 1, 2, 3, 0, 4, 1, 2, 3, 0, 4,
-      2, 2, 2, 0, 3, 1, 2, 3, 0, 4, 1, 2, 3, 0, 4,
-      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, 2, 3, 0, 4, 1, 0, 0, 0, 4, 1, 0, 0, 0, 4,
+      3, 1, 4, 0, 2, 1, 0, 0, 0, 4, 1, 0, 0, 0, 4,
+      2, 2, 2, 0, 3, 1, 0, 0, 0, 4, 1, 0, 0, 0, 4,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+      5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
       //
-      1, 2, 3, 0, 4, 1, 2, 3, 0, 4, 1, 2, 3, 0, 4,
-      3, 1, 4, 0, 2, 1, 2, 3, 0, 4, 1, 2, 3, 0, 4,
-      2, 2, 2, 0, 3, 1, 2, 3, 0, 4, 1, 2, 3, 0, 4,
+      1, 2, 3, 0, 4, 1, 0, 0, 0, 4, 1, 0, 0, 0, 4,
+      3, 1, 4, 0, 2, 1, 0, 0, 0, 4, 1, 0, 0, 0, 4,
+      2, 2, 2, 0, 3, 1, 0, 0, 0, 4, 1, 0, 0, 0, 4,
       5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -36,11 +36,15 @@ class GuaTileMap {
   static new(...args) {
     return new this(...args)
   }
+  onTheGround(i, j) {
+    let index = i * this.th + j
+    return this.tiles[index] != 0
+  }
   draw() {
     const game = this.game
     for (let index = 0; index < this.tiles.length; index++) {
-      const indexOfImage = this.tiles[index];
-      if (indexOfImage === 0) {
+      const indexOfImage = this.tiles[index] - 1;
+      if (indexOfImage === -1) {
         continue
       }
       let x = Math.floor(index / this.th) * this.tileWidth
@@ -72,6 +76,8 @@ class SceneEditor extends Scene {
       this.score = 0;
 
       this.map = GuaTileMap.new(game)
+
+      this.sprite.addMap(this.map)
   
       // this.pipes = []
       // for (let index = 0; index < 6; index++) {
